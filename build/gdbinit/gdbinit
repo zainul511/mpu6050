@@ -1,0 +1,2 @@
+source E:/Projects/mpu6050/build/gdbinit/symbols
+source E:/Projects/mpu6050/build/gdbinit/connect
