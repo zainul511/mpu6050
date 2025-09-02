@@ -20,9 +20,9 @@ static const char *TAG = "MPU6050";
 // I2C initialization
 void i2c_master_init() {
     i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = I2C_MASTER_SDA_IO,
-        .scl_io_num = I2C_MASTER_SCL_IO,
+        .mode = I2C_MODE_MASTER, // Set ESP32 as Master
+        .sda_io_num = I2C_MASTER_SDA_IO, // Assign SDA pin for I2C communcation
+        .scl_io_num = I2C_MASTER_SCL_IO, // Assign SCL pin for I2C communcation
         .sda_pullup_en = GPIO_PULLUP_ENABLE,
         .scl_pullup_en = GPIO_PULLUP_ENABLE,
         .master.clk_speed = I2C_MASTER_FREQ_HZ,
