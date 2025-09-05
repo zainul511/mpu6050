@@ -1,7 +1,7 @@
 {
     "version":            "1.2",
     "project_name":       "mpu6050",
-    "project_version":    "7b3444d-dirty",
+    "project_version":    "856ccec-dirty",
     "project_path":       "E:/Projects/mpu6050",
     "idf_path":           "C:/Users/DELL/esp/v5.5/esp-idf",
     "build_dir":          "E:/Projects/mpu6050/build",
