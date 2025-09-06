@@ -1,7 +1,8 @@
 {
   "files.associations": {
     "i2c.h": "c",
-    "freertos.h": "c"
+    "freertos.h": "c",
+    "nvs_flash.h": "c"
   },
   "idf.portWin": "COM8",
   "idf.openOcdConfigs": [
@@ -15,5 +16,8 @@
     "--background-index",
     "--query-driver=C:\\Users\\DELL\\.espressif\\tools\\xtensa-esp-elf\\esp-14.2.0_20241119\\xtensa-esp-elf\\bin\\xtensa-esp32-elf-gcc.exe",
     "--compile-commands-dir=e:\\Projects\\mpu6050\\build"
-  ]
+  ],
+  "idf.espIdfPathWin": "C:\\Users\\DELL\\esp\\v5.5\\esp-idf",
+  "idf.toolsPathWin": "C:\\Users\\DELL\\.espressif",
+  "idf.pythonInstallPath": "C:\\Users\\DELL\\.espressif\\tools\\idf-python\\3.11.2\\python.exe"
 }
