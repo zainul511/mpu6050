@@ -25,7 +25,7 @@
 #define I2C_MASTER_FREQ_HZ 100000
 #define I2C_MASTER_PORT I2C_NUM_0
 
-#define SERVER_URL "http://192.168.8.100:5000/data"
+#define SERVER_URL "http://192.168.8.102:5000/data"
 #define WIFI_SSID "HUAWEI-A5CE"
 #define WIFI_PASS "i861qene"
 
@@ -44,9 +44,7 @@ typedef struct {
 static EventGroupHandle_t s_wifi_event_group;
 #define WIFI_CONNECTED_BIT BIT0
 
-static void wifi_event_handler(void* arg, esp_event_base_t event_base,
-                               int32_t event_id, void* event_data)
-{
+static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data){
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
         esp_wifi_connect();
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
@@ -55,8 +53,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
-        ESP_LOGI(TAG, "Got IP: %s",
-                 ip4addr_ntoa((ip4_addr_t *)&event->ip_info.ip));
+        ESP_LOGI(TAG, "Got IP: %s",ip4addr_ntoa((ip4_addr_t *)&event->ip_info.ip));
     }
 }
 
@@ -71,16 +68,9 @@ void wait_for_wifi_connection()
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-                                                        ESP_EVENT_ANY_ID,
-                                                        &wifi_event_handler,
-                                                        NULL,
-                                                        NULL));
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
-                                                        IP_EVENT_STA_GOT_IP,
-                                                        &wifi_event_handler,
-                                                        NULL,
-                                                        NULL));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, NULL));
+
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL, NULL));
 
     wifi_config_t wifi_config = {
         .sta = {
@@ -93,8 +83,7 @@ void wait_for_wifi_connection()
     ESP_ERROR_CHECK(esp_wifi_start());
 
     ESP_LOGI(TAG, "Connecting to WiFi...");
-    xEventGroupWaitBits(s_wifi_event_group, WIFI_CONNECTED_BIT,
-                        pdFALSE, pdTRUE, portMAX_DELAY);
+    xEventGroupWaitBits(s_wifi_event_group, WIFI_CONNECTED_BIT, pdFALSE, pdTRUE, portMAX_DELAY);
     ESP_LOGI(TAG, "WiFi connected!");
 }
 
@@ -187,14 +176,37 @@ esp_err_t mpu6050_read_accel(uint8_t channel, int16_t *accel_x, int16_t *accel_y
 // HTTP event handler
 esp_err_t http_event_handler(esp_http_client_event_t *evt) {
     switch(evt->event_id) {
-        case HTTP_EVENT_ERROR: ESP_LOGD(TAG, "HTTP_EVENT_ERROR"); break;
-        case HTTP_EVENT_ON_CONNECTED: ESP_LOGD(TAG, "HTTP_EVENT_ON_CONNECTED"); break;
-        case HTTP_EVENT_HEADERS_SENT: ESP_LOGD(TAG, "HTTP_EVENT_HEADERS_SENT"); break;
-        case HTTP_EVENT_ON_HEADER: ESP_LOGD(TAG, "HTTP_EVENT_ON_HEADER"); break;
-        case HTTP_EVENT_ON_DATA: ESP_LOGD(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len); break;
-        case HTTP_EVENT_ON_FINISH: ESP_LOGD(TAG, "HTTP_EVENT_ON_FINISH"); break;
-        case HTTP_EVENT_DISCONNECTED: ESP_LOGD(TAG, "HTTP_EVENT_DISCONNECTED"); break;
-        case HTTP_EVENT_REDIRECT: ESP_LOGD(TAG, "HTTP_EVENT_REDIRECT"); break;
+        case HTTP_EVENT_ERROR: 
+            ESP_LOGD(TAG, "HTTP_EVENT_ERROR"); 
+            break;
+
+        case HTTP_EVENT_ON_CONNECTED: 
+            ESP_LOGD(TAG, "HTTP_EVENT_ON_CONNECTED"); 
+            break;
+
+        case HTTP_EVENT_HEADERS_SENT: 
+            ESP_LOGD(TAG, "HTTP_EVENT_HEADERS_SENT"); 
+            break;
+
+        case HTTP_EVENT_ON_HEADER: 
+            ESP_LOGD(TAG, "HTTP_EVENT_ON_HEADER"); 
+            break;
+
+        case HTTP_EVENT_ON_DATA: 
+            ESP_LOGD(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len); 
+            break;
+
+        case HTTP_EVENT_ON_FINISH: 
+            ESP_LOGD(TAG, "HTTP_EVENT_ON_FINISH"); 
+            break;
+
+        case HTTP_EVENT_DISCONNECTED: 
+            ESP_LOGD(TAG, "HTTP_EVENT_DISCONNECTED"); 
+            break;
+
+        case HTTP_EVENT_REDIRECT: 
+            ESP_LOGD(TAG, "HTTP_EVENT_REDIRECT"); 
+            break;
     }
     return ESP_OK;
 }
@@ -271,11 +283,10 @@ void data_collection_task(void *pvParameters) {
         if (data_collection_active) {
             for (uint8_t channel = 0; channel < 3; channel++) {
                 if (mpu6050_read_accel(channel, &accel_data[channel][0], 
-                                      &accel_data[channel][1], 
-                                      &accel_data[channel][2]) == ESP_OK) {
+                                                &accel_data[channel][1], 
+                                                &accel_data[channel][2]) == ESP_OK) {
                     ESP_LOGI(TAG, "Sensor %d - X: %6d, Y: %6d, Z: %6d",
-                            channel, accel_data[channel][0], 
-                            accel_data[channel][1], accel_data[channel][2]);
+                            channel, accel_data[channel][0], accel_data[channel][1], accel_data[channel][2]);
                 }
             }
             memcpy(packet.accel, accel_data, sizeof(accel_data));
